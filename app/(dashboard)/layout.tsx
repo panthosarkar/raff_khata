@@ -3,6 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import api from "@/lib/api";
 
 export default function DashboardLayout({
   children,
@@ -11,9 +12,15 @@ export default function DashboardLayout({
 }) {
   const router = useRouter();
 
-  const handleLogout = () => {
-    localStorage.removeItem("access_token");
-    router.push("/login");
+  const handleLogout = async () => {
+    try {
+      await api.post("/auth/logout");
+    } catch (error) {
+      console.error("Logout failed", error);
+    } finally {
+      localStorage.removeItem("access_token");
+      router.push("/login");
+    }
   };
 
   return (

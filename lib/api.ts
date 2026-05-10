@@ -1,8 +1,20 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8000/api",
+  baseURL: process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8001/api",
   withCredentials: true,
+});
+
+api.interceptors.request.use((config) => {
+  if (typeof window !== "undefined") {
+    const token = localStorage.getItem("access_token");
+    if (token) {
+      config.headers = config.headers ?? {};
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+  }
+
+  return config;
 });
 
 api.interceptors.response.use(
@@ -12,10 +24,12 @@ api.interceptors.response.use(
     if (error.response && error.response.status === 401 && !original._retry) {
       original._retry = true;
       try {
-        const refresh = await api.post("/auth/refresh");
-        // caller should retry original request with new token
+        await api.post("/auth/refresh");
         return api(original);
       } catch (e) {
+        if (typeof window !== "undefined") {
+          localStorage.removeItem("access_token");
+        }
         return Promise.reject(error);
       }
     }

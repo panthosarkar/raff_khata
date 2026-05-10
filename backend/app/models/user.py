@@ -1,14 +1,14 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
 from typing import Optional
 
 
 class UserCreate(BaseModel):
-    email: EmailStr
+    email: str
     password: str
 
 
 class UserInDB(BaseModel):
     id: Optional[str]
-    email: EmailStr
+    email: str
     hashed_password: str
 

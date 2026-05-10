@@ -36,6 +36,7 @@ export default function LoginPage() {
         <input
           className="w-full p-2 border rounded"
           placeholder="Email"
+          type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
