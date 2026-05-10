@@ -21,32 +21,29 @@ export default function DashboardLayout({
       <aside className="w-64 bg-slate-800 text-white p-6">
         <h1 className="text-2xl font-bold mb-8">Raff_khata</h1>
         <nav className="space-y-4">
-          <Link
-            href="/dashboard"
-            className="block p-3 rounded hover:bg-slate-700"
-          >
+          <Link href="/" className="block p-3 rounded hover:bg-slate-700">
             Dashboard
           </Link>
           <Link
-            href="/dashboard/transactions"
+            href="/transactions"
             className="block p-3 rounded hover:bg-slate-700"
           >
             Transactions
           </Link>
           <Link
-            href="/dashboard/budgets"
+            href="/budgets"
             className="block p-3 rounded hover:bg-slate-700"
           >
             Budgets
           </Link>
           <Link
-            href="/dashboard/reports"
+            href="/reports"
             className="block p-3 rounded hover:bg-slate-700"
           >
             Reports
           </Link>
           <Link
-            href="/dashboard/recurring"
+            href="/recurring"
             className="block p-3 rounded hover:bg-slate-700"
           >
             Recurring
