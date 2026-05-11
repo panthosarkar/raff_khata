@@ -41,12 +41,12 @@ export default function AuthActions() {
       >
         Create account
       </Link>
-      <Link
+      {/* <Link
         href="/transactions"
         className="rounded-full border border-[rgba(0,238,255,0.18)] bg-[rgba(15,20,27,0.7)] px-6 py-3.5 font-medium text-white transition hover:border-[rgba(0,238,255,0.38)] hover:bg-[rgba(15,20,27,0.9)]"
       >
         Open dashboard
-      </Link>
+      </Link> */}
     </div>
   );
 }
