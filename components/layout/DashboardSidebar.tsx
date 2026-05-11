@@ -31,8 +31,8 @@ export function DashboardSidebar() {
 
   return (
     <aside
-      className={`${mobileClasses} digital-panel-strong flex flex-col rounded-4xl p-5 text-white lg:sticky lg:top-8 lg:h-[calc(100vh-4rem)] bg-[rgba(8,10,13,0.9)]`}
-      aria-hidden={!open && true}
+      className={`${mobileClasses} digital-panel-strong flex flex-col p-5 text-white lg:sticky lg:top-8 lg:h-[calc(100vh-4rem)] bg-[rgba(8,10,13,0.9)]`}
+      aria-hidden={!open}
     >
       {/* mobile close button */}
       <div className="mb-4 flex items-center justify-between md:hidden">
