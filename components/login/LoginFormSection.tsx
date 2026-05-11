@@ -9,6 +9,8 @@ export function LoginFormSection() {
     isLoading,
     displayError,
     handleSubmit,
+    showForgotPassword,
+    setShowForgotPassword,
   } = useLogin();
 
   return (
@@ -54,6 +56,14 @@ export function LoginFormSection() {
           Register
         </a>
       </p>
+      <div className="mt-6 border-t border-[rgba(0,238,255,0.14)] pt-6">
+        <button
+          onClick={() => setShowForgotPassword(!showForgotPassword)}
+          className="w-full rounded-full border border-[rgba(0,238,255,0.18)] px-4 py-2 text-sm text-[rgba(243,251,255,0.82)] transition hover:border-[rgba(0,238,255,0.4)] hover:text-white"
+        >
+          {showForgotPassword ? "Back to login" : "Forgot password?"}
+        </button>
+      </div>
     </section>
   );
 }

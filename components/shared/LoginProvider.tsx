@@ -20,6 +20,8 @@ interface LoginContextType {
   setLocalError: (error: string) => void;
   isLoading: boolean;
   error: string | null;
+  showForgotPassword: boolean;
+  setShowForgotPassword: (show: boolean) => void;
   handleSubmit: (e: React.FormEvent) => Promise<void>;
   handleForgotPassword: (e: React.FormEvent) => Promise<void>;
   displayError: string | null;
@@ -37,6 +39,7 @@ export function LoginProvider({ children }: { children: React.ReactNode }) {
   const [resetStatus, setResetStatus] = useState("");
   const [resetLoading, setResetLoading] = useState(false);
   const [localError, setLocalError] = useState("");
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,10 +62,10 @@ export function LoginProvider({ children }: { children: React.ReactNode }) {
       if (res?.reset_token) {
         setResetToken(res.reset_token);
         setResetStatus(
-          "Reset token generated. Copy it and open the reset page.",
+          "Reset token generated. Copy it and then proceed to the reset password page.",
         );
       } else {
-        setResetStatus(res?.message || "Reset token generated.");
+        setResetStatus(res?.message || "Check your email for the reset token.");
       }
     } catch (err: any) {
       setResetStatus(err.message || "Could not generate reset token");
@@ -91,6 +94,8 @@ export function LoginProvider({ children }: { children: React.ReactNode }) {
         localError,
         setLocalError,
         isLoading,
+        showForgotPassword,
+        setShowForgotPassword,
         error,
         handleSubmit,
         handleForgotPassword,
