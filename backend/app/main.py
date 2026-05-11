@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+import os
 
 from .database import connect_to_mongo, close_mongo_connection
 from .routers import auth, transactions, recurring, export
@@ -10,11 +11,18 @@ settings = Settings()
 
 app = FastAPI(title="Raff_khata API")
 
+# Build allowed origins from environment (supports both dev and production URLs)
 allowed_origins = [
     origin.strip().rstrip("/")
     for origin in settings.ALLOWED_ORIGINS.split(",")
     if origin.strip()
 ]
+
+# Add any frontend URLs from environment variables (for production deployment)
+if "FRONTEND_URL" in os.environ:
+    frontend_url = os.environ["FRONTEND_URL"].strip().rstrip("/")
+    if frontend_url not in allowed_origins:
+        allowed_origins.append(frontend_url)
 
 app.add_middleware(
     CORSMiddleware,
