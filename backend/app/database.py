@@ -1,5 +1,6 @@
 from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo.errors import ConfigurationError
+import certifi
 from .config import Settings
 
 settings = Settings()
@@ -9,7 +10,13 @@ db = None
 
 async def connect_to_mongo():
     global client, db
-    client = AsyncIOMotorClient(settings.MONGO_URI)
+    client = AsyncIOMotorClient(
+        settings.MONGO_URI,
+        tls=True,
+        tlsCAFile=certifi.where(),
+        serverSelectionTimeoutMS=20000,
+        connectTimeoutMS=20000,
+    )
     try:
         # Use the database from the URI when present.
         db = client.get_default_database()
