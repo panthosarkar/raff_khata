@@ -1,5 +1,3 @@
-"use client";
-
 import { RecurringPage } from "@/components/recurring/RecurringPage";
 
 export default function Page() {
