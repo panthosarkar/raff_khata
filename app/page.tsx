@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import AuthActions from "@/components/ui/AuthActions";
 
 export default function Home() {
   return (
@@ -23,26 +24,7 @@ export default function Home() {
               modern interface shaped with glow, depth, and motion.
             </p>
           </div>
-          <div className="flex flex-wrap gap-4">
-            <Link
-              href="/login"
-              className="neon-button rounded-full px-6 py-3.5 font-medium"
-            >
-              Sign in
-            </Link>
-            <Link
-              href="/register"
-              className="rounded-full border border-[rgba(0,238,255,0.18)] bg-[rgba(15,20,27,0.7)] px-6 py-3.5 font-medium text-white transition hover:border-[rgba(0,238,255,0.38)] hover:bg-[rgba(15,20,27,0.9)]"
-            >
-              Create account
-            </Link>
-            <Link
-              href="/transactions"
-              className="rounded-full border border-[rgba(0,238,255,0.18)] bg-[rgba(15,20,27,0.7)] px-6 py-3.5 font-medium text-white transition hover:border-[rgba(0,238,255,0.38)] hover:bg-[rgba(15,20,27,0.9)]"
-            >
-              Open dashboard
-            </Link>
-          </div>
+          <AuthActions />
         </section>
 
         <aside className="digital-panel-strong card-sheen rounded-4xl p-6 md:p-8">
