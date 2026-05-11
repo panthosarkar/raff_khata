@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const COOKIE_NAME = "authToken";
+const COOKIE_NAME = "access_token";
 
 const protectedRoutes = ["/transactions", "/budgets", "/reports", "/recurring"];
 const authRoutes = ["/login", "/register", "/reset-password"];
