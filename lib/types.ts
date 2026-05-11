@@ -6,4 +6,5 @@ export type Transaction = {
   note?: string;
   date?: string;
   is_income?: boolean;
+  folder_id?: string;
 };

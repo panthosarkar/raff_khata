@@ -10,6 +10,7 @@ class TransactionCreate(BaseModel):
     note: Optional[str] = None
     date: datetime = Field(default_factory=datetime.utcnow)
     is_income: bool = False
+    folder_id: Optional[str] = None
 
 
 class TransactionInDB(TransactionCreate):
@@ -23,4 +24,5 @@ class TransactionUpdate(BaseModel):
     note: Optional[str] = None
     date: Optional[datetime] = None
     is_income: Optional[bool] = None
+    folder_id: Optional[str] = None
 

@@ -9,11 +9,11 @@ export function TransactionsMobile({ transactions }: TransactionsMobileProps) {
   const { openEditForm } = useTransactions();
 
   return (
-    <div className="grid gap-4 p-4 md:hidden">
+    <div className="grid gap-3 p-2 md:hidden">
       {transactions.map((transaction) => (
         <article
           key={transaction.id}
-          className="rounded-3xl border border-[rgba(0,238,255,0.14)] bg-[rgba(15,20,27,0.74)] p-4"
+          className="rounded-xl bg-[rgba(15,20,27,0.74)] p-3"
         >
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
@@ -33,7 +33,7 @@ export function TransactionsMobile({ transactions }: TransactionsMobileProps) {
             </span>
           </div>
 
-          <div className="mt-4 grid gap-3 text-sm text-[rgba(243,251,255,0.7)]">
+          <div className="mt-3 grid gap-2 text-sm text-[rgba(243,251,255,0.7)]">
             <div className="flex items-center justify-between gap-4">
               <span className="text-[rgba(243,251,255,0.5)]">Amount</span>
               <span
@@ -49,11 +49,11 @@ export function TransactionsMobile({ transactions }: TransactionsMobileProps) {
             </div>
           </div>
 
-          <div className="mt-4 flex gap-3">
+          <div className="mt-3 flex gap-2">
             <button
               type="button"
               onClick={() => openEditForm(transaction)}
-              className="flex-1 rounded-full border border-[rgba(0,238,255,0.2)] bg-[rgba(15,20,27,0.6)] px-4 py-2 text-sm font-medium text-white transition hover:border-[rgba(0,238,255,0.4)] hover:bg-[rgba(0,238,255,0.08)]"
+              className="flex-1 rounded-full border border-[rgba(0,238,255,0.08)] bg-[rgba(15,20,27,0.6)] px-3 py-2 text-sm font-medium text-white transition hover:border-[rgba(0,238,255,0.16)] hover:bg-[rgba(0,238,255,0.04)]"
             >
               Edit
             </button>

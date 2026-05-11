@@ -22,11 +22,13 @@ async def create_transaction(payload: TransactionCreate, current_user=Depends(ge
 
 
 @router.get("/")
-async def list_transactions(limit: int = Query(50), skip: int = Query(0), category: Optional[str] = None, current_user=Depends(get_current_user)):
+async def list_transactions(limit: int = Query(50), skip: int = Query(0), category: Optional[str] = None, folder_id: Optional[str] = None, current_user=Depends(get_current_user)):
     coll = database.db.get_collection("transactions")
     q = {"user_id": current_user["id"]}
     if category:
         q["category"] = category
+    if folder_id:
+        q["folder_id"] = folder_id
     cursor = coll.find(q).sort("date", -1).skip(skip).limit(limit)
     items = []
     async for doc in cursor:

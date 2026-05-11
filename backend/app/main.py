@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import os
 
 from .database import connect_to_mongo, close_mongo_connection
-from .routers import auth, transactions, recurring, export
+from .routers import auth, transactions, recurring, export, tx_folders
 from .services import scheduler
 from .config import Settings
 
@@ -34,6 +34,7 @@ app.add_middleware(
 
 app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
 app.include_router(transactions.router, prefix="/api/transactions", tags=["transactions"])
+app.include_router(tx_folders.router, prefix="/api/transactions/folders", tags=["transactions", "folders"])
 app.include_router(recurring.router, prefix="/api/recurring", tags=["recurring"])
 app.include_router(export.router, prefix="/api", tags=["export"])
 
