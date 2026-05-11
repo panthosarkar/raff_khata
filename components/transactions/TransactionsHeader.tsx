@@ -53,7 +53,9 @@ export function TransactionsHeader() {
               const name = window.prompt("New folder name:");
               if (name && name.trim()) await createFolder(name.trim());
             }}
-            className="text-xs text-[rgba(0,238,255,0.8)]"
+            title="Add folder"
+            aria-label="Add folder"
+            className="inline-flex items-center justify-center h-8 w-8 rounded-full border border-[rgba(0,238,255,0.08)] bg-[rgba(0,238,255,0.04)] text-[rgba(0,238,255,0.9)] hover:bg-[rgba(0,238,255,0.08)] ml-1"
           >
             +
           </button>
@@ -66,7 +68,9 @@ export function TransactionsHeader() {
                   await deleteFolder(selectedFolder.id);
                 }
               }}
-              className="text-xs text-rose-300"
+              title={`Delete folder ${selectedFolder.name}`}
+              aria-label={`Delete folder ${selectedFolder.name}`}
+              className="inline-flex items-center justify-center h-8 w-8 rounded-full border border-transparent bg-[rgba(255,0,0,0.02)] text-rose-300 hover:bg-[rgba(255,0,0,0.04)] ml-1"
             >
               ×
             </button>
