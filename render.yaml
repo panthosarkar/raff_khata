@@ -3,6 +3,7 @@ services:
     name: raff-khata-backend
     runtime: docker
     dockerfilePath: backend/Dockerfile
+    startCommand: "uvicorn app.main:app --host 0.0.0.0 --port $PORT"
     plan: free
     region: oregon
     envVars:
