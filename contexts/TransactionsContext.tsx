@@ -180,6 +180,7 @@ export function TransactionsProvider({ children }: { children: ReactNode }) {
           note: formData.note || undefined,
           is_income: formData.is_income,
           date: formData.date || undefined,
+          folder_id: formData.folder_id || undefined,
         };
 
         if (editingTransaction?.id) {
