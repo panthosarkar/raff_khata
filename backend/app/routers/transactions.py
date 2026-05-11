@@ -7,7 +7,6 @@ from ..models.transaction import TransactionCreate, TransactionUpdate
 from .. import database
 from datetime import datetime
 from ..middleware.auth_middleware import get_current_user
-from bson import ObjectId
 
 router = APIRouter()
 
@@ -15,6 +14,7 @@ router = APIRouter()
 @router.post("/")
 async def create_transaction(payload: TransactionCreate, current_user=Depends(get_current_user)):
     coll = database.db.get_collection("transactions")
+    folders_coll = database.db.get_collection("transaction_folders")
     # convert pydantic model to dict
     # use model_dump if available, fallback to dict
     try:
@@ -28,6 +28,13 @@ async def create_transaction(payload: TransactionCreate, current_user=Depends(ge
         except Exception:
             # leave as-is if conversion fails
             pass
+    else:
+        # keep transaction-folder relation consistent by assigning default folder
+        default_folder = await folders_coll.find_one(
+            {"user_id": current_user["id"], "is_default": True}
+        )
+        if default_folder:
+            doc["folder_id"] = default_folder["_id"]
     doc["created_at"] = datetime.utcnow()
     doc["user_id"] = current_user["id"]
     res = await coll.insert_one(doc)
@@ -59,6 +66,48 @@ async def list_transactions(limit: int = Query(50), skip: int = Query(0), catego
         doc.pop("_id", None)
         items.append(doc)
     return {"transactions": items}
+
+
+@router.get("/summary")
+async def transactions_summary(
+    category: Optional[str] = None,
+    folder_id: Optional[str] = None,
+    current_user=Depends(get_current_user),
+):
+    coll = database.db.get_collection("transactions")
+    q = {"user_id": current_user["id"]}
+    if category:
+        q["category"] = category
+    if folder_id:
+        try:
+            q["folder_id"] = ObjectId(folder_id)
+        except Exception:
+            q["folder_id"] = folder_id
+
+    pipeline = [
+        {"$match": q},
+        {
+            "$group": {
+                "_id": "$is_income",
+                "total": {"$sum": "$amount"},
+            }
+        },
+    ]
+
+    income = 0.0
+    expense = 0.0
+    async for row in coll.aggregate(pipeline):
+        amount = float(row.get("total") or 0)
+        if bool(row.get("_id")):
+            income = amount
+        else:
+            expense = amount
+
+    return {
+        "income": income,
+        "expense": expense,
+        "balance": income - expense,
+    }
 
 
 @router.put("/{transaction_id}")

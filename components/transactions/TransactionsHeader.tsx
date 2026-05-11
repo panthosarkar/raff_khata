@@ -6,6 +6,7 @@ import {
   ChevronDown,
   Download,
   FolderPlus,
+  Star,
   Plus,
   Trash2,
 } from "lucide-react";
@@ -41,17 +42,20 @@ export function TransactionsHeader() {
     selectedFolder,
     setSelectedFolder,
     createFolder,
+    setDefaultFolder,
     deleteFolder,
   } = useTransactions();
 
   const [folderDialogOpen, setFolderDialogOpen] = useState(false);
   const [folderName, setFolderName] = useState("");
+  const [makeDefault, setMakeDefault] = useState(false);
 
   const handleCreateFolder = async () => {
     const name = folderName.trim();
     if (!name) return;
-    await createFolder(name);
+    await createFolder(name, makeDefault);
     setFolderName("");
+    setMakeDefault(false);
     setFolderDialogOpen(false);
   };
 
@@ -107,7 +111,15 @@ export function TransactionsHeader() {
                     key={folder.id}
                     onSelect={() => setSelectedFolder(folder)}
                   >
-                    {folder.name}
+                    <span className="flex items-center gap-2">
+                      {folder.name}
+                      {folder.is_default && (
+                        <span className="inline-flex items-center gap-1 rounded-full border border-[rgba(0,238,255,0.2)] px-2 py-0.5 text-[10px] uppercase tracking-[0.16em] text-[rgba(0,238,255,0.85)]">
+                          <Star className="h-3 w-3" />
+                          Default
+                        </span>
+                      )}
+                    </span>
                     {selectedFolder?.id === folder.id && (
                       <Check className="ml-auto h-4 w-4" />
                     )}
@@ -141,6 +153,15 @@ export function TransactionsHeader() {
                   placeholder="Folder name"
                   autoFocus
                 />
+                <label className="flex items-center gap-3 text-sm text-[rgba(243,251,255,0.82)]">
+                  <input
+                    type="checkbox"
+                    checked={makeDefault}
+                    onChange={(event) => setMakeDefault(event.target.checked)}
+                    className="h-4 w-4 rounded border-[rgba(0,238,255,0.28)] bg-[rgba(15,20,27,0.8)]"
+                  />
+                  Make this my default folder
+                </label>
                 <div className="flex justify-end gap-3">
                   <Button
                     type="button"
@@ -158,15 +179,28 @@ export function TransactionsHeader() {
           </Dialog>
 
           {selectedFolder && (
-            <Button
-              type="button"
-              variant="destructive"
-              onClick={handleDeleteSelectedFolder}
-              className="gap-2"
-            >
-              <Trash2 className="h-4 w-4" />
-              Delete folder
-            </Button>
+            <>
+              {!selectedFolder.is_default && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setDefaultFolder(selectedFolder.id)}
+                  className="gap-2"
+                >
+                  <Star className="h-4 w-4" />
+                  Make default
+                </Button>
+              )}
+              <Button
+                type="button"
+                variant="destructive"
+                onClick={handleDeleteSelectedFolder}
+                className="gap-2"
+              >
+                <Trash2 className="h-4 w-4" />
+                Delete folder
+              </Button>
+            </>
           )}
         </div>
 

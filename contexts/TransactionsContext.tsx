@@ -5,7 +5,7 @@ import React, {
   useContext,
   useState,
   useEffect,
-  useMemo,
+  useRef,
   ReactNode,
   useCallback,
 } from "react";
@@ -40,6 +40,7 @@ interface TransactionTotals {
 interface Folder {
   id: string;
   name: string;
+  is_default?: boolean;
 }
 
 interface TransactionsContextType {
@@ -62,7 +63,8 @@ interface TransactionsContextType {
   selectedFolder?: Folder | null;
   setSelectedFolder: React.Dispatch<React.SetStateAction<Folder | null>>;
   fetchFolders: () => Promise<void>;
-  createFolder: (name: string) => Promise<void>;
+  createFolder: (name: string, isDefault?: boolean) => Promise<void>;
+  setDefaultFolder: (id: string) => Promise<void>;
   deleteFolder: (id: string) => Promise<void>;
   openCreateForm: () => void;
   openEditForm: (transaction: Transaction) => void;
@@ -98,6 +100,12 @@ export function TransactionsProvider({ children }: { children: ReactNode }) {
   const [folders, setFolders] = useState<Folder[]>([]);
   const [foldersLoading, setFoldersLoading] = useState(false);
   const [selectedFolder, setSelectedFolder] = useState<Folder | null>(null);
+  const [totals, setTotals] = useState<TransactionTotals>({
+    income: 0,
+    expense: 0,
+    balance: 0,
+  });
+  const hasInitializedFolder = useRef(false);
 
   const formatDateForInput = (value?: string): string => {
     if (!value) return "";
@@ -138,15 +146,27 @@ export function TransactionsProvider({ children }: { children: ReactNode }) {
 
   const fetchTransactions = useCallback(async () => {
     try {
-      const res = await api.get("/transactions", {
-        params: {
-          limit: 100,
-          skip: 0,
-          category: category || undefined,
-          folder_id: selectedFolder?.id || undefined,
-        },
+      const params = {
+        limit: 100,
+        skip: 0,
+        category: category || undefined,
+        folder_id: selectedFolder?.id || undefined,
+      };
+      const [listRes, summaryRes] = await Promise.all([
+        api.get("/transactions", { params }),
+        api.get("/transactions/summary", {
+          params: {
+            category: category || undefined,
+            folder_id: selectedFolder?.id || undefined,
+          },
+        }),
+      ]);
+      setTransactions(listRes.data.transactions || []);
+      setTotals({
+        income: Number(summaryRes.data.income || 0),
+        expense: Number(summaryRes.data.expense || 0),
+        balance: Number(summaryRes.data.balance || 0),
       });
-      setTransactions(res.data.transactions || []);
     } catch (error) {
       console.error("Failed to load transactions", error);
     } finally {
@@ -156,17 +176,7 @@ export function TransactionsProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     fetchTransactions();
-  }, [category, fetchTransactions]);
-
-  const totals = useMemo<TransactionTotals>(() => {
-    const income = transactions
-      .filter((tx) => tx.is_income)
-      .reduce((sum, tx) => sum + Number(tx.amount || 0), 0);
-    const expense = transactions
-      .filter((tx) => !tx.is_income)
-      .reduce((sum, tx) => sum + Number(tx.amount || 0), 0);
-    return { income, expense, balance: income - expense };
-  }, [transactions]);
+  }, [fetchTransactions]);
 
   const handleAddTransaction = useCallback(
     async (event: React.FormEvent) => {
@@ -234,12 +244,27 @@ export function TransactionsProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const createFolder = useCallback(
-    async (name: string) => {
+    async (name: string, isDefault = false) => {
       try {
-        await api.post("/transactions/folders/", { name });
+        await api.post("/transactions/folders/", {
+          name,
+          is_default: isDefault,
+        });
         await fetchFolders();
       } catch (err) {
         console.error("Failed to create folder", err);
+      }
+    },
+    [fetchFolders],
+  );
+
+  const setDefaultFolder = useCallback(
+    async (id: string) => {
+      try {
+        await api.put(`/transactions/folders/${id}/default`);
+        await fetchFolders();
+      } catch (err) {
+        console.error("Failed to set default folder", err);
       }
     },
     [fetchFolders],
@@ -264,9 +289,22 @@ export function TransactionsProvider({ children }: { children: ReactNode }) {
   }, [fetchFolders]);
 
   useEffect(() => {
-    // reload transactions when selected folder changes
-    fetchTransactions();
-  }, [selectedFolder, fetchTransactions]);
+    if (!folders.length) return;
+
+    if (!hasInitializedFolder.current) {
+      const defaultFolder = folders.find((f) => f.is_default);
+      if (defaultFolder) {
+        setSelectedFolder(defaultFolder);
+      }
+      hasInitializedFolder.current = true;
+      return;
+    }
+
+    if (selectedFolder && !folders.some((f) => f.id === selectedFolder.id)) {
+      const defaultFolder = folders.find((f) => f.is_default) || null;
+      setSelectedFolder(defaultFolder);
+    }
+  }, [folders, selectedFolder]);
 
   const value: TransactionsContextType = {
     transactions,
@@ -292,6 +330,7 @@ export function TransactionsProvider({ children }: { children: ReactNode }) {
     setSelectedFolder,
     fetchFolders,
     createFolder,
+    setDefaultFolder,
     deleteFolder,
   };
 
