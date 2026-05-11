@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getCookie, COOKIE_NAMES, clearAuthCookies } from "./cookies";
 
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8001/api",
@@ -7,7 +8,7 @@ const api = axios.create({
 
 api.interceptors.request.use((config) => {
   if (typeof window !== "undefined") {
-    const token = localStorage.getItem("access_token");
+    const token = getCookie(COOKIE_NAMES.ACCESS_TOKEN);
     if (token) {
       config.headers = config.headers ?? {};
       config.headers.Authorization = `Bearer ${token}`;
@@ -28,7 +29,7 @@ api.interceptors.response.use(
         return api(original);
       } catch (e) {
         if (typeof window !== "undefined") {
-          localStorage.removeItem("access_token");
+          clearAuthCookies();
         }
         return Promise.reject(error);
       }

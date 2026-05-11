@@ -2,18 +2,15 @@
 
 import React from "react";
 import Link from "next/link";
+import { getCookie, COOKIE_NAMES } from "@/lib/cookies";
 
 export default function AuthActions() {
   const [loggedIn, setLoggedIn] = React.useState(false);
 
   React.useEffect(() => {
     // consider either token or stored email as sign of login
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("access_token")
-        : null;
-    const email =
-      typeof window !== "undefined" ? localStorage.getItem("user_email") : null;
+    const token = getCookie(COOKIE_NAMES.ACCESS_TOKEN);
+    const email = getCookie(COOKIE_NAMES.USER_EMAIL);
     setLoggedIn(Boolean(token || email));
   }, []);
 

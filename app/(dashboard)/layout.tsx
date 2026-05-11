@@ -2,30 +2,17 @@
 
 import React from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import api from "@/lib/api";
+import { useAuth } from "@/components/shared/AuthProvider";
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const router = useRouter();
-  const [userEmail, setUserEmail] = React.useState<string | null>(null);
-
-  React.useEffect(() => {
-    setUserEmail(localStorage.getItem("user_email"));
-  }, []);
+  const { user, logout } = useAuth();
 
   const handleLogout = async () => {
-    try {
-      await api.post("/auth/logout");
-    } catch (error) {
-      console.error("Logout failed", error);
-    } finally {
-      localStorage.removeItem("access_token");
-      router.push("/login");
-    }
+    await logout();
   };
 
   return (
@@ -50,7 +37,7 @@ export default function DashboardLayout({
               Signed in as
             </p>
             <p className="mt-1 break-words font-medium text-white">
-              {userEmail || "Unknown user"}
+              {user?.email || "Unknown user"}
             </p>
           </div>
           <nav className="space-y-2 text-sm font-medium">

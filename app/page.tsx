@@ -1,6 +1,4 @@
 "use client";
-
-import Link from "next/link";
 import AuthActions from "@/components/ui/AuthActions";
 
 export default function Home() {

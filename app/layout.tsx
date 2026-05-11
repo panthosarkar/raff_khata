@@ -1,5 +1,6 @@
 import "./globals.css";
 import React from "react";
+import { AuthProvider } from "@/components/shared/AuthProvider";
 
 export const metadata = {
   title: "Raff_khata",
@@ -14,7 +15,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="bg-background text-foreground antialiased">
-        <div className="app-shell">{children}</div>
+        <AuthProvider>
+          <div className="app-shell">{children}</div>
+        </AuthProvider>
       </body>
     </html>
   );
