@@ -16,14 +16,12 @@ export default function ReportsPage() {
       try {
         const res = await api.get("/transactions?limit=10000");
         const txs = res.data.transactions || [];
-
         const income = txs
           .filter((t: any) => t.is_income)
-          .reduce((s: number, t: any) => s + (t.amount || 0), 0);
+          .reduce((sum: number, t: any) => sum + (t.amount || 0), 0);
         const expense = txs
           .filter((t: any) => !t.is_income)
-          .reduce((s: number, t: any) => s + (t.amount || 0), 0);
-
+          .reduce((sum: number, t: any) => sum + (t.amount || 0), 0);
         const byCategory: Record<string, number> = {};
         txs.forEach((t: any) => {
           if (!t.is_income) {
@@ -31,13 +29,11 @@ export default function ReportsPage() {
               (byCategory[t.category] || 0) + (t.amount || 0);
           }
         });
-
         const categories = Object.entries(byCategory).map(([name, total]) => ({
           name,
           total,
           percent: expense > 0 ? ((total / expense) * 100).toFixed(1) : 0,
         }));
-
         setReport({ categories, totalIncome: income, totalExpense: expense });
       } catch (err) {
         console.error("Failed to load report", err);
@@ -49,51 +45,73 @@ export default function ReportsPage() {
   }, []);
 
   return (
-    <div>
-      <h1 className="text-3xl font-bold mb-8">Reports</h1>
+    <div className="space-y-8 text-white">
+      <div className="space-y-3">
+        <p className="text-sm font-semibold uppercase tracking-[0.4em] text-[rgba(0,238,255,0.9)]">
+          Analytics grid
+        </p>
+        <h1 className="text-4xl font-semibold leading-tight md:text-5xl">
+          Reports
+        </h1>
+        <p className="max-w-2xl text-sm leading-7 text-[rgba(243,251,255,0.7)] md:text-base">
+          See totals and category distribution in a sharp, high-contrast layout
+          built for quick scans.
+        </p>
+      </div>
+
       {loading ? (
-        <p>Loading...</p>
+        <div className="digital-panel rounded-4xl p-8 text-[rgba(243,251,255,0.72)]">
+          Loading reports...
+        </div>
       ) : (
         <div className="space-y-8">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="p-6 bg-white rounded shadow">
-              <p className="text-slate-600 mb-2">Total Income</p>
-              <p className="text-3xl font-bold text-green-600">
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="digital-panel card-sheen rounded-4xl p-6">
+              <p className="text-sm uppercase tracking-[0.24em] text-[rgba(243,251,255,0.55)]">
+                Total Income
+              </p>
+              <p className="mt-4 text-4xl font-semibold text-emerald-300">
                 ৳{report.totalIncome.toFixed(2)}
               </p>
             </div>
-            <div className="p-6 bg-white rounded shadow">
-              <p className="text-slate-600 mb-2">Total Expense</p>
-              <p className="text-3xl font-bold text-red-600">
+            <div className="digital-panel card-sheen rounded-4xl p-6">
+              <p className="text-sm uppercase tracking-[0.24em] text-[rgba(243,251,255,0.55)]">
+                Total Expense
+              </p>
+              <p className="mt-4 text-4xl font-semibold text-rose-300">
                 ৳{report.totalExpense.toFixed(2)}
               </p>
             </div>
           </div>
 
-          <div className="bg-white rounded shadow p-6">
-            <h2 className="text-xl font-semibold mb-4">Expenses by Category</h2>
-            {report.categories.length > 0 ? (
-              <div className="space-y-3">
-                {report.categories.map((cat) => (
-                  <div key={cat.name}>
-                    <div className="flex justify-between mb-1">
-                      <span className="font-medium">{cat.name}</span>
-                      <span className="text-slate-600">
+          <div className="digital-panel-strong rounded-4xl p-6 md:p-8">
+            <h2 className="text-2xl font-semibold text-white">
+              Expenses by Category
+            </h2>
+            <div className="mt-6 space-y-4">
+              {report.categories.length > 0 ? (
+                report.categories.map((cat) => (
+                  <div key={cat.name} className="space-y-2">
+                    <div className="flex items-center justify-between gap-4 text-sm">
+                      <span className="font-medium text-white">{cat.name}</span>
+                      <span className="text-[rgba(243,251,255,0.68)]">
                         ৳{cat.total.toFixed(2)} ({cat.percent}%)
                       </span>
                     </div>
-                    <div className="w-full bg-slate-200 rounded h-2">
+                    <div className="h-2 overflow-hidden rounded-full bg-[rgba(255,255,255,0.08)]">
                       <div
-                        className="bg-blue-600 h-2 rounded"
+                        className="h-full rounded-full bg-[linear-gradient(90deg,#0ef,rgba(0,238,255,0.35))]"
                         style={{ width: `${cat.percent}%` }}
                       />
                     </div>
                   </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-slate-500">No expenses to report</p>
-            )}
+                ))
+              ) : (
+                <p className="text-[rgba(243,251,255,0.68)]">
+                  No expenses to report
+                </p>
+              )}
+            </div>
           </div>
         </div>
       )}

@@ -13,8 +13,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>
-        <div className="min-h-screen bg-gray-50 text-slate-900">{children}</div>
+      <body className="bg-background text-foreground antialiased">
+        <div className="app-shell">{children}</div>
       </body>
     </html>
   );

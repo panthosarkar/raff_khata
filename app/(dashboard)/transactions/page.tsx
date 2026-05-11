@@ -105,24 +105,30 @@ export default function TransactionsPage() {
   };
 
   return (
-    <div className="space-y-8">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Transactions</h1>
-          <p className="mt-2 text-slate-600">
-            Create transactions, filter the ledger, and export your records.
+    <div className="space-y-8 text-white">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <div className="space-y-3">
+          <p className="text-sm font-semibold uppercase tracking-[0.4em] text-[rgba(0,238,255,0.9)]">
+            Ledger stream
+          </p>
+          <h1 className="text-4xl font-semibold leading-tight md:text-5xl">
+            Transactions
+          </h1>
+          <p className="max-w-2xl text-sm leading-7 text-[rgba(243,251,255,0.7)] md:text-base">
+            Add entries, filter categories, and export your history from a clean
+            digital workspace.
           </p>
         </div>
         <div className="flex flex-wrap gap-3">
           <button
             onClick={handleExportCsv}
-            className="rounded-xl border border-slate-200 bg-white px-4 py-2 font-medium text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50"
+            className="rounded-full border border-[rgba(0,238,255,0.2)] bg-[rgba(15,20,27,0.6)] px-5 py-3 text-sm font-medium text-white transition hover:border-[rgba(0,238,255,0.38)] hover:bg-[rgba(15,20,27,0.88)]"
           >
             Export CSV
           </button>
           <button
             onClick={() => setShowForm(!showForm)}
-            className="rounded-xl bg-slate-900 px-4 py-2 font-medium text-white shadow-sm transition hover:bg-slate-800"
+            className="neon-button rounded-full px-5 py-3 text-sm font-medium"
           >
             {showForm ? "Close form" : "Add transaction"}
           </button>
@@ -130,54 +136,65 @@ export default function TransactionsPage() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
-        <div className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200">
-          <p className="text-sm text-slate-500">Income</p>
-          <p className="mt-2 text-2xl font-semibold text-emerald-600">
-            ৳{totals.income.toFixed(2)}
-          </p>
-        </div>
-        <div className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200">
-          <p className="text-sm text-slate-500">Expense</p>
-          <p className="mt-2 text-2xl font-semibold text-rose-600">
-            ৳{totals.expense.toFixed(2)}
-          </p>
-        </div>
-        <div className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200">
-          <p className="text-sm text-slate-500">Balance</p>
-          <p
-            className={`mt-2 text-2xl font-semibold ${totals.balance >= 0 ? "text-emerald-600" : "text-rose-600"}`}
+        {[
+          ["Income", totals.income, "text-emerald-300", "rgba(0,238,255,0.14)"],
+          ["Expense", totals.expense, "text-rose-300", "rgba(255,96,96,0.12)"],
+          [
+            "Balance",
+            totals.balance,
+            totals.balance >= 0 ? "text-emerald-300" : "text-rose-300",
+            totals.balance >= 0
+              ? "rgba(0,238,255,0.14)"
+              : "rgba(255,96,96,0.12)",
+          ],
+        ].map(([label, value, tone, glow]) => (
+          <div
+            key={label}
+            className="digital-panel card-sheen rounded-4xl p-5"
+            style={{
+              backgroundImage: `linear-gradient(180deg, ${glow}, rgba(37,45,57,0.94))`,
+            }}
           >
-            ৳{totals.balance.toFixed(2)}
-          </p>
-        </div>
+            <p className="text-sm uppercase tracking-[0.24em] text-[rgba(243,251,255,0.55)]">
+              {label}
+            </p>
+            <p className={`mt-4 text-3xl font-semibold ${tone}`}>
+              ৳{Number(value).toFixed(2)}
+            </p>
+          </div>
+        ))}
       </div>
 
-      <div className="flex flex-wrap items-center gap-3 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200">
-        <span className="text-sm font-medium text-slate-600">
-          Filter by category
-        </span>
-        <select
-          value={category}
-          onChange={(event) => setCategory(event.target.value)}
-          className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-slate-400"
-        >
-          <option value="">All categories</option>
-          {categories.map((item) => (
-            <option key={item} value={item}>
-              {item}
-            </option>
-          ))}
-        </select>
+      <div className="digital-panel rounded-4xl p-5">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <span className="text-sm uppercase tracking-[0.24em] text-[rgba(243,251,255,0.55)]">
+            Filter by category
+          </span>
+          <select
+            value={category}
+            onChange={(event) => setCategory(event.target.value)}
+            className="digital-select max-w-xs px-4 py-3 text-sm"
+          >
+            <option value="">All categories</option>
+            {categories.map((item) => (
+              <option key={item} value={item}>
+                {item}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       {showForm && (
-        <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+        <div className="digital-panel-strong rounded-4xl p-6">
           <form
             onSubmit={handleAddTransaction}
             className="grid gap-4 md:grid-cols-2"
           >
             <label className="space-y-2">
-              <span className="text-sm font-medium text-slate-700">Amount</span>
+              <span className="text-sm font-medium text-[rgba(243,251,255,0.78)]">
+                Amount
+              </span>
               <input
                 type="number"
                 step="0.01"
@@ -186,12 +203,12 @@ export default function TransactionsPage() {
                 onChange={(event) =>
                   setFormData({ ...formData, amount: event.target.value })
                 }
-                className="w-full rounded-xl border border-slate-200 px-3 py-2 outline-none transition focus:border-slate-400"
+                className="digital-input px-4 py-3"
                 placeholder="0.00"
               />
             </label>
             <label className="space-y-2">
-              <span className="text-sm font-medium text-slate-700">
+              <span className="text-sm font-medium text-[rgba(243,251,255,0.78)]">
                 Currency
               </span>
               <input
@@ -199,12 +216,12 @@ export default function TransactionsPage() {
                 onChange={(event) =>
                   setFormData({ ...formData, currency: event.target.value })
                 }
-                className="w-full rounded-xl border border-slate-200 px-3 py-2 outline-none transition focus:border-slate-400"
+                className="digital-input px-4 py-3"
                 placeholder="BDT"
               />
             </label>
             <label className="space-y-2">
-              <span className="text-sm font-medium text-slate-700">
+              <span className="text-sm font-medium text-[rgba(243,251,255,0.78)]">
                 Category
               </span>
               <select
@@ -212,7 +229,7 @@ export default function TransactionsPage() {
                 onChange={(event) =>
                   setFormData({ ...formData, category: event.target.value })
                 }
-                className="w-full rounded-xl border border-slate-200 px-3 py-2 outline-none transition focus:border-slate-400"
+                className="digital-select px-4 py-3"
               >
                 {categories.map((item) => (
                   <option key={item} value={item}>
@@ -222,25 +239,29 @@ export default function TransactionsPage() {
               </select>
             </label>
             <label className="space-y-2">
-              <span className="text-sm font-medium text-slate-700">Date</span>
+              <span className="text-sm font-medium text-[rgba(243,251,255,0.78)]">
+                Date
+              </span>
               <input
                 type="datetime-local"
                 value={formData.date}
                 onChange={(event) =>
                   setFormData({ ...formData, date: event.target.value })
                 }
-                className="w-full rounded-xl border border-slate-200 px-3 py-2 outline-none transition focus:border-slate-400"
+                className="digital-input px-4 py-3"
               />
             </label>
             <label className="space-y-2 md:col-span-2">
-              <span className="text-sm font-medium text-slate-700">Note</span>
+              <span className="text-sm font-medium text-[rgba(243,251,255,0.78)]">
+                Note
+              </span>
               <input
                 type="text"
                 value={formData.note}
                 onChange={(event) =>
                   setFormData({ ...formData, note: event.target.value })
                 }
-                className="w-full rounded-xl border border-slate-200 px-3 py-2 outline-none transition focus:border-slate-400"
+                className="digital-input px-4 py-3"
                 placeholder="Add a short note"
               />
             </label>
@@ -251,9 +272,9 @@ export default function TransactionsPage() {
                 onChange={(event) =>
                   setFormData({ ...formData, is_income: event.target.checked })
                 }
-                className="h-4 w-4 rounded border-slate-300"
+                className="h-4 w-4 rounded border-[rgba(0,238,255,0.28)] bg-[rgba(15,20,27,0.8)]"
               />
-              <span className="text-sm font-medium text-slate-700">
+              <span className="text-sm font-medium text-[rgba(243,251,255,0.78)]">
                 Mark as income
               </span>
             </label>
@@ -261,7 +282,7 @@ export default function TransactionsPage() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="rounded-xl bg-emerald-600 px-5 py-2.5 font-medium text-white shadow-sm transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-60"
+                className="neon-button rounded-full px-5 py-3 font-medium disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {submitting ? "Saving..." : "Save transaction"}
               </button>
@@ -270,58 +291,62 @@ export default function TransactionsPage() {
         </div>
       )}
 
-      <div className="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200">
+      <div className="overflow-hidden rounded-4xl border border-[rgba(0,238,255,0.16)] bg-[rgba(15,20,27,0.62)] shadow-[0_18px_60px_rgba(0,0,0,0.32)]">
         {loading ? (
-          <p className="p-8 text-center text-slate-500">
+          <p className="p-8 text-center text-[rgba(243,251,255,0.68)]">
             Loading transactions...
           </p>
         ) : transactions.length > 0 ? (
-          <table className="w-full">
-            <thead className="bg-slate-50 text-left text-sm text-slate-500">
-              <tr>
-                <th className="px-6 py-4 font-medium">Date</th>
-                <th className="px-6 py-4 font-medium">Category</th>
-                <th className="px-6 py-4 font-medium">Note</th>
-                <th className="px-6 py-4 text-right font-medium">Amount</th>
-                <th className="px-6 py-4 text-center font-medium">Type</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {transactions.map((transaction) => (
-                <tr
-                  key={transaction.id}
-                  className="text-sm hover:bg-slate-50/70"
-                >
-                  <td className="px-6 py-4 text-slate-600">
-                    {transaction.date
-                      ? new Date(transaction.date).toLocaleString()
-                      : "-"}
-                  </td>
-                  <td className="px-6 py-4 font-medium text-slate-900">
-                    {transaction.category}
-                  </td>
-                  <td className="px-6 py-4 text-slate-600">
-                    {transaction.note || "-"}
-                  </td>
-                  <td
-                    className={`px-6 py-4 text-right font-semibold ${transaction.is_income ? "text-emerald-600" : "text-rose-600"}`}
-                  >
-                    {transaction.currency || "BDT"}{" "}
-                    {Number(transaction.amount || 0).toFixed(2)}
-                  </td>
-                  <td className="px-6 py-4 text-center">
-                    <span
-                      className={`rounded-full px-3 py-1 text-xs font-medium ${transaction.is_income ? "bg-emerald-50 text-emerald-700" : "bg-rose-50 text-rose-700"}`}
-                    >
-                      {transaction.is_income ? "Income" : "Expense"}
-                    </span>
-                  </td>
+          <div className="overflow-x-auto">
+            <table className="min-w-full">
+              <thead className="bg-[rgba(0,238,255,0.06)] text-left text-sm text-[rgba(243,251,255,0.62)]">
+                <tr>
+                  <th className="px-6 py-4 font-medium">Date</th>
+                  <th className="px-6 py-4 font-medium">Category</th>
+                  <th className="px-6 py-4 font-medium">Note</th>
+                  <th className="px-6 py-4 text-right font-medium">Amount</th>
+                  <th className="px-6 py-4 text-center font-medium">Type</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-[rgba(255,255,255,0.06)]">
+                {transactions.map((transaction) => (
+                  <tr
+                    key={transaction.id}
+                    className="text-sm transition hover:bg-[rgba(0,238,255,0.05)]"
+                  >
+                    <td className="px-6 py-4 text-[rgba(243,251,255,0.68)]">
+                      {transaction.date
+                        ? new Date(transaction.date).toLocaleString()
+                        : "-"}
+                    </td>
+                    <td className="px-6 py-4 font-medium text-white">
+                      {transaction.category}
+                    </td>
+                    <td className="px-6 py-4 text-[rgba(243,251,255,0.68)]">
+                      {transaction.note || "-"}
+                    </td>
+                    <td
+                      className={`px-6 py-4 text-right font-semibold ${transaction.is_income ? "text-emerald-300" : "text-rose-300"}`}
+                    >
+                      {transaction.currency || "BDT"}{" "}
+                      {Number(transaction.amount || 0).toFixed(2)}
+                    </td>
+                    <td className="px-6 py-4 text-center">
+                      <span
+                        className={`rounded-full px-3 py-1 text-xs font-medium ${transaction.is_income ? "bg-[rgba(0,238,255,0.12)] text-[#a8fbff]" : "bg-[rgba(255,96,96,0.12)] text-[#ffd1d1]"}`}
+                      >
+                        {transaction.is_income ? "Income" : "Expense"}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         ) : (
-          <p className="p-8 text-center text-slate-500">No transactions yet.</p>
+          <p className="p-8 text-center text-[rgba(243,251,255,0.68)]">
+            No transactions yet.
+          </p>
         )}
       </div>
     </div>
