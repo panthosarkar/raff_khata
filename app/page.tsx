@@ -17,11 +17,11 @@ export default function Home() {
               Raff_khata
             </p>
             <h1 className="max-w-3xl text-5xl font-semibold leading-[1.02] text-white md:text-6xl xl:text-7xl">
-              A neon finance dashboard built for fast decisions.
+              Your money, mapped. Instantly.
             </h1>
             <p className="max-w-2xl text-base leading-8 text-(--muted) md:text-lg">
-              Track transactions, recurring rules, budgets, and reports in a
-              modern interface shaped with glow, depth, and motion.
+              Raff_khata tracks every taka - income, expenses, recurring bills,
+              and budgets - so you always know where you stand.
             </p>
           </div>
           <AuthActions />
@@ -44,28 +44,28 @@ export default function Home() {
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="digital-panel rounded-2xl p-4">
               <p className="text-sm text-[rgba(243,251,255,0.65)]">
-                Encrypted auth
+                Secure login
               </p>
               <p className="mt-2 text-xl font-semibold text-white">
-                JWT login flow
+                Private account access
               </p>
             </div>
             <div className="digital-panel rounded-2xl p-4">
               <p className="text-sm text-[rgba(243,251,255,0.65)]">Live sync</p>
               <p className="mt-2 text-xl font-semibold text-white">
-                Backend connected
+                Real-time sync
               </p>
             </div>
             <div className="digital-panel rounded-2xl p-4">
               <p className="text-sm text-[rgba(243,251,255,0.65)]">Analytics</p>
               <p className="mt-2 text-xl font-semibold text-white">
-                Balance overview
+                Spending overview
               </p>
             </div>
             <div className="digital-panel rounded-2xl p-4">
               <p className="text-sm text-[rgba(243,251,255,0.65)]">Scheduler</p>
               <p className="mt-2 text-xl font-semibold text-white">
-                Recurring rules
+                Auto-billing rules
               </p>
             </div>
           </div>

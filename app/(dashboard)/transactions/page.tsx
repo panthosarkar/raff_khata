@@ -161,14 +161,14 @@ export default function TransactionsPage() {
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div className="space-y-3">
           <p className="text-sm font-semibold uppercase tracking-[0.4em] text-[rgba(0,238,255,0.9)]">
-            Ledger stream
+            TRANSACTION LOG
           </p>
           <h1 className="text-4xl font-semibold leading-tight md:text-5xl">
             Transactions
           </h1>
           <p className="max-w-2xl text-sm leading-7 text-[rgba(243,251,255,0.7)] md:text-base">
-            Add entries, filter categories, and export your history from a clean
-            digital workspace.
+            Add income or expenses, filter by category, and export your full
+            history as CSV.
           </p>
         </div>
         <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
@@ -236,6 +236,12 @@ export default function TransactionsPage() {
           </select>
         </div>
       </div>
+
+      {!loading && transactions.length === 0 && (
+        <div className="rounded-4xl border border-[rgba(0,238,255,0.14)] bg-[rgba(15,20,27,0.55)] px-5 py-4 text-sm text-[rgba(243,251,255,0.72)]">
+          No transactions yet. Add your first one above.
+        </div>
+      )}
 
       {showForm && (
         <div className="digital-panel-strong rounded-4xl p-6">

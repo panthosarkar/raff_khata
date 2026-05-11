@@ -10,6 +10,11 @@ export default function ReportsPage() {
     totalExpense: 0,
   });
   const [loading, setLoading] = useState(true);
+  const isEmpty =
+    !loading &&
+    report.categories.length === 0 &&
+    report.totalIncome === 0 &&
+    report.totalExpense === 0;
 
   useEffect(() => {
     const fetchReport = async () => {
@@ -48,7 +53,7 @@ export default function ReportsPage() {
     <div className="space-y-8 text-white">
       <div className="space-y-3">
         <p className="text-sm font-semibold uppercase tracking-[0.4em] text-[rgba(0,238,255,0.9)]">
-          Analytics grid
+          REPORTS
         </p>
         <h1 className="text-4xl font-semibold leading-tight md:text-5xl">
           Reports
@@ -62,6 +67,37 @@ export default function ReportsPage() {
       {loading ? (
         <div className="digital-panel rounded-4xl p-8 text-[rgba(243,251,255,0.72)]">
           Loading reports...
+        </div>
+      ) : isEmpty ? (
+        <div className="digital-panel-strong rounded-4xl p-8 md:p-10">
+          <div className="mx-auto flex max-w-xl flex-col items-center text-center">
+            <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full border border-[rgba(0,238,255,0.2)] bg-[rgba(0,238,255,0.08)]">
+              <svg
+                viewBox="0 0 24 24"
+                className="h-10 w-10 text-[#0ef]"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M4 19V5" />
+                <path d="M4 19h16" />
+                <path d="M8 15V11" />
+                <path d="M12 15V8" />
+                <path d="M16 15V12" />
+              </svg>
+            </div>
+            <h2 className="text-2xl font-semibold text-white md:text-3xl">
+              Add some transactions first and your reports will appear here
+              automatically.
+            </h2>
+            <p className="mt-4 max-w-lg text-sm leading-7 text-[rgba(243,251,255,0.72)] md:text-base">
+              Once you start logging income or expenses, this page will show
+              your totals and category breakdowns.
+            </p>
+          </div>
         </div>
       ) : (
         <div className="space-y-8">
