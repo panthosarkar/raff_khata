@@ -6,7 +6,7 @@ async def process_due_rules():
     coll = database.db.get_collection("recurring")
     tx_coll = database.db.get_collection("transactions")
     now = datetime.utcnow()
-    cursor = coll.find({"next_run": {"$lte": now}})
+    cursor = coll.find({"next_run": {"$lte": now}, "user_id": {"$ne": None}})
     async for rule in cursor:
         # create transaction
         tx = {
@@ -17,6 +17,7 @@ async def process_due_rules():
             "date": rule.get("next_run") or now,
             "is_income": rule.get("is_income", False),
             "created_at": now,
+            "user_id": rule.get("user_id"),
         }
         await tx_coll.insert_one(tx)
         # compute next run

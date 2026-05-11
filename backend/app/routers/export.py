@@ -1,6 +1,7 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from fastapi.responses import StreamingResponse
 from .. import database
+from ..middleware.auth_middleware import get_current_user
 import csv
 import io
 
@@ -8,9 +9,9 @@ router = APIRouter()
 
 
 @router.get("/transactions/csv")
-async def export_transactions_csv():
+async def export_transactions_csv(current_user=Depends(get_current_user)):
     coll = database.db.get_collection("transactions")
-    cursor = coll.find({}).sort("date", -1)
+    cursor = coll.find({"user_id": current_user["id"]}).sort("date", -1)
 
     async def generate():
         buf = io.StringIO()

@@ -25,7 +25,13 @@ def create_access_token(subject: str, expires_minutes: int | None = None) -> str
 
 def create_refresh_token(subject: str, expires_days: int | None = None) -> str:
     expire = datetime.utcnow() + timedelta(days=(expires_days or settings.REFRESH_TOKEN_EXPIRE_DAYS))
-    to_encode = {"sub": subject, "exp": expire}
+    to_encode = {"sub": subject, "exp": expire, "purpose": "refresh"}
+    return jwt.encode(to_encode, settings.SECRET_KEY, algorithm="HS256")
+
+
+def create_password_reset_token(subject: str, expires_minutes: int = 30) -> str:
+    expire = datetime.utcnow() + timedelta(minutes=expires_minutes)
+    to_encode = {"sub": subject, "exp": expire, "purpose": "password_reset"}
     return jwt.encode(to_encode, settings.SECRET_KEY, algorithm="HS256")
 
 
