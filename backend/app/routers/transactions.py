@@ -32,6 +32,12 @@ async def list_transactions(limit: int = Query(50), skip: int = Query(0), catego
     cursor = coll.find(q).sort("date", -1).skip(skip).limit(limit)
     items = []
     async for doc in cursor:
+        # Ensure folder_id is returned as string when present
+        if doc.get("folder_id") is not None:
+            try:
+                doc["folder_id"] = str(doc.get("folder_id"))
+            except Exception:
+                pass
         doc["id"] = str(doc.get("_id"))
         doc.pop("_id", None)
         items.append(doc)
@@ -61,5 +67,11 @@ async def update_transaction(transaction_id: str, payload: TransactionUpdate, cu
 
     updated = await coll.find_one({"_id": object_id, "user_id": current_user["id"]})
     updated["id"] = str(updated.get("_id"))
+    # normalize folder_id to string if present
+    if updated.get("folder_id") is not None:
+        try:
+            updated["folder_id"] = str(updated.get("folder_id"))
+        except Exception:
+            pass
     updated.pop("_id", None)
     return {"transaction": updated}
