@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Query
 from typing import Optional
 from ..models.transaction import TransactionCreate
-from ..database import db
+from .. import database
 from datetime import datetime
 
 router = APIRouter()
@@ -9,7 +9,7 @@ router = APIRouter()
 
 @router.post("/")
 async def create_transaction(payload: TransactionCreate):
-    coll = db.get_collection("transactions")
+    coll = database.db.get_collection("transactions")
     doc = payload.dict()
     doc["created_at"] = datetime.utcnow()
     res = await coll.insert_one(doc)
@@ -18,7 +18,7 @@ async def create_transaction(payload: TransactionCreate):
 
 @router.get("/")
 async def list_transactions(limit: int = Query(50), skip: int = Query(0), category: Optional[str] = None):
-    coll = db.get_collection("transactions")
+    coll = database.db.get_collection("transactions")
     q = {}
     if category:
         q["category"] = category

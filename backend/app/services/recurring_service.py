@@ -1,10 +1,10 @@
-from ..database import db
+from .. import database
 from datetime import datetime, timedelta
 
 
 async def process_due_rules():
-    coll = db.get_collection("recurring")
-    tx_coll = db.get_collection("transactions")
+    coll = database.db.get_collection("recurring")
+    tx_coll = database.db.get_collection("transactions")
     now = datetime.utcnow()
     cursor = coll.find({"next_run": {"$lte": now}})
     async for rule in cursor:

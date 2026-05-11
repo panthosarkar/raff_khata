@@ -1,14 +1,17 @@
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from .recurring_service import process_due_rules
 from datetime import datetime
+import asyncio
 
 scheduler = AsyncIOScheduler()
 
 
-def _process_job():
-    # wrapper to schedule the async processor
-    import asyncio
-    asyncio.create_task(process_due_rules())
+async def _process_job():
+    # async job to process recurring rules
+    try:
+        await process_due_rules()
+    except Exception as e:
+        print(f"Error processing recurring rules: {e}")
 
 
 async def start():

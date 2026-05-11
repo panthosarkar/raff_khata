@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from ..models.recurring import RecurringRuleCreate
-from ..database import db
+from .. import database
 from datetime import datetime
 
 router = APIRouter()
@@ -8,7 +8,7 @@ router = APIRouter()
 
 @router.post("/")
 async def create_rule(payload: RecurringRuleCreate):
-    coll = db.get_collection("recurring")
+    coll = database.db.get_collection("recurring")
     doc = payload.dict()
     if not doc.get("next_run"):
         doc["next_run"] = datetime.utcnow()
@@ -18,7 +18,7 @@ async def create_rule(payload: RecurringRuleCreate):
 
 @router.get("/")
 async def list_rules():
-    coll = db.get_collection("recurring")
+    coll = database.db.get_collection("recurring")
     items = []
     cursor = coll.find({})
     async for doc in cursor:

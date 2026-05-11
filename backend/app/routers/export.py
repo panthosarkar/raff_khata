@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Response
 from fastapi.responses import StreamingResponse
-from ..database import db
+from .. import database
 import csv
 import io
 
@@ -9,7 +9,7 @@ router = APIRouter()
 
 @router.get("/transactions/csv")
 async def export_transactions_csv():
-    coll = db.get_collection("transactions")
+    coll = database.db.get_collection("transactions")
     cursor = coll.find({}).sort("date", -1)
 
     def generate():

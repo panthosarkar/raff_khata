@@ -3,7 +3,8 @@ from datetime import datetime, timedelta
 from jose import jwt, JWTError
 from ..config import Settings
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# pbkdf2_sha256 avoids the bcrypt backend issue in the current runtime.
+pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
 settings = Settings()
 
 
