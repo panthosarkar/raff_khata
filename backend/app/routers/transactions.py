@@ -7,6 +7,7 @@ from ..models.transaction import TransactionCreate, TransactionUpdate
 from .. import database
 from datetime import datetime
 from ..middleware.auth_middleware import get_current_user
+from bson import ObjectId
 
 router = APIRouter()
 
@@ -14,7 +15,19 @@ router = APIRouter()
 @router.post("/")
 async def create_transaction(payload: TransactionCreate, current_user=Depends(get_current_user)):
     coll = database.db.get_collection("transactions")
-    doc = payload.dict()
+    # convert pydantic model to dict
+    # use model_dump if available, fallback to dict
+    try:
+        doc = payload.model_dump()
+    except Exception:
+        doc = payload.dict()
+    # if folder_id present as string, store as ObjectId for consistency
+    if doc.get("folder_id"):
+        try:
+            doc["folder_id"] = ObjectId(doc["folder_id"])
+        except Exception:
+            # leave as-is if conversion fails
+            pass
     doc["created_at"] = datetime.utcnow()
     doc["user_id"] = current_user["id"]
     res = await coll.insert_one(doc)
@@ -28,7 +41,11 @@ async def list_transactions(limit: int = Query(50), skip: int = Query(0), catego
     if category:
         q["category"] = category
     if folder_id:
-        q["folder_id"] = folder_id
+        # attempt to match ObjectId stored folder references
+        try:
+            q["folder_id"] = ObjectId(folder_id)
+        except Exception:
+            q["folder_id"] = folder_id
     cursor = coll.find(q).sort("date", -1).skip(skip).limit(limit)
     items = []
     async for doc in cursor:
@@ -60,6 +77,12 @@ async def update_transaction(transaction_id: str, payload: TransactionUpdate, cu
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Transaction not found")
 
     updates = payload.model_dump(exclude_unset=True)
+    # if folder_id is present in updates, convert to ObjectId for storage
+    if "folder_id" in updates and updates.get("folder_id"):
+        try:
+            updates["folder_id"] = ObjectId(updates["folder_id"])
+        except Exception:
+            pass
     await coll.update_one(
         {"_id": object_id, "user_id": current_user["id"]},
         {"$set": updates},

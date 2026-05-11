@@ -48,5 +48,5 @@ async def delete_folder(folder_id: str, current_user=Depends(get_current_user)):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Folder not found")
     # Optionally, unset folder_id from transactions that used this folder
     tx_coll = database.db.get_collection("transactions")
-    await tx_coll.update_many({"folder_id": folder_id, "user_id": current_user["id"]}, {"$unset": {"folder_id": ""}})
+    await tx_coll.update_many({"folder_id": object_id, "user_id": current_user["id"]}, {"$unset": {"folder_id": ""}})
     return {"deleted": True}
