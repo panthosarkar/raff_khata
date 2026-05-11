@@ -15,3 +15,12 @@ class TransactionCreate(BaseModel):
 class TransactionInDB(TransactionCreate):
     id: Optional[str]
 
+
+class TransactionUpdate(BaseModel):
+    amount: Optional[float] = None
+    currency: Optional[str] = None
+    category: Optional[str] = None
+    note: Optional[str] = None
+    date: Optional[datetime] = None
+    is_income: Optional[bool] = None
+
