@@ -27,7 +27,7 @@ export function DashboardSidebar() {
   // mobile off-canvas classes
   const mobileClasses = open
     ? "fixed inset-y-0 left-0 z-50 w-72 transform translate-x-0 transition-transform md:static md:transform-none md:w-auto"
-    : "fixed inset-y-0 left-0 z-50 w-72 -translate-x-full transform transition-transform md:static md:transform-none md:w-auto";
+    : "rounded-4xl transform transition-transform md:static md:transform-none md:w-auto";
 
   return (
     <aside
