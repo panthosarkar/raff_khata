@@ -11,6 +11,9 @@ export function TransactionsForm() {
     handleAddTransaction,
     resetForm,
     setShowForm,
+    folders,
+    foldersLoading,
+    createFolder,
   } = useTransactions();
 
   if (!showForm) return null;
@@ -109,6 +112,41 @@ export function TransactionsForm() {
             className="digital-input px-4 py-3"
             placeholder="Add a short note"
           />
+        </label>
+        <label className="space-y-2 md:col-span-2">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-[rgba(243,251,255,0.78)]">
+              Folder
+            </span>
+            <button
+              type="button"
+              onClick={async () => {
+                const name = window.prompt("New folder name:");
+                if (name && name.trim()) await createFolder(name.trim());
+              }}
+              className="text-xs text-[rgba(0,238,255,0.8)] hover:underline"
+            >
+              + Add folder
+            </button>
+          </div>
+          <select
+            value={formData.folder_id || ""}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                folder_id: e.target.value || undefined,
+              })
+            }
+            className="digital-select px-4 py-3"
+          >
+            <option value="">(No folder)</option>
+            {!foldersLoading &&
+              folders.map((f) => (
+                <option key={f.id} value={f.id}>
+                  {f.name}
+                </option>
+              ))}
+          </select>
         </label>
         <label className="flex items-center gap-3 md:col-span-2">
           <input

@@ -28,12 +28,18 @@ interface FormData {
   note: string;
   is_income: boolean;
   date: string;
+  folder_id?: string;
 }
 
 interface TransactionTotals {
   income: number;
   expense: number;
   balance: number;
+}
+
+interface Folder {
+  id: string;
+  name: string;
 }
 
 interface TransactionsContextType {
@@ -51,6 +57,13 @@ interface TransactionsContextType {
   setShowForm: (show: boolean) => void;
   setCategory: (category: string) => void;
   setFormData: (data: FormData) => void;
+  folders: Folder[];
+  foldersLoading: boolean;
+  selectedFolder?: Folder | null;
+  setSelectedFolder: (f?: Folder | null) => void;
+  fetchFolders: () => Promise<void>;
+  createFolder: (name: string) => Promise<void>;
+  deleteFolder: (id: string) => Promise<void>;
   openCreateForm: () => void;
   openEditForm: (transaction: Transaction) => void;
   resetForm: () => void;
@@ -70,6 +83,7 @@ const emptyFormData: FormData = {
   note: "",
   is_income: false,
   date: "",
+  folder_id: undefined,
 };
 
 export function TransactionsProvider({ children }: { children: ReactNode }) {
@@ -81,6 +95,9 @@ export function TransactionsProvider({ children }: { children: ReactNode }) {
     useState<Transaction | null>(null);
   const [category, setCategory] = useState("");
   const [formData, setFormData] = useState<FormData>(emptyFormData);
+  const [folders, setFolders] = useState<Folder[]>([]);
+  const [foldersLoading, setFoldersLoading] = useState(false);
+  const [selectedFolder, setSelectedFolder] = useState<Folder | null>(null);
 
   const formatDateForInput = (value?: string): string => {
     if (!value) return "";
@@ -114,6 +131,7 @@ export function TransactionsProvider({ children }: { children: ReactNode }) {
       note: transaction.note || "",
       is_income: Boolean(transaction.is_income),
       date: formatDateForInput(transaction.date),
+      folder_id: transaction.folder_id || undefined,
     });
     setShowForm(true);
   }, []);
@@ -121,7 +139,12 @@ export function TransactionsProvider({ children }: { children: ReactNode }) {
   const fetchTransactions = useCallback(async () => {
     try {
       const res = await api.get("/transactions", {
-        params: { limit: 100, skip: 0, category: category || undefined },
+        params: {
+          limit: 100,
+          skip: 0,
+          category: category || undefined,
+          folder_id: selectedFolder?.id || undefined,
+        },
       });
       setTransactions(res.data.transactions || []);
     } catch (error) {
@@ -129,7 +152,7 @@ export function TransactionsProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false);
     }
-  }, [category]);
+  }, [category, selectedFolder]);
 
   useEffect(() => {
     fetchTransactions();
@@ -197,6 +220,53 @@ export function TransactionsProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  const fetchFolders = useCallback(async () => {
+    setFoldersLoading(true);
+    try {
+      const res = await api.get("/transactions/folders/");
+      setFolders(res.data.folders || []);
+    } catch (err) {
+      console.error("Failed to load folders", err);
+    } finally {
+      setFoldersLoading(false);
+    }
+  }, []);
+
+  const createFolder = useCallback(
+    async (name: string) => {
+      try {
+        await api.post("/transactions/folders/", { name });
+        await fetchFolders();
+      } catch (err) {
+        console.error("Failed to create folder", err);
+      }
+    },
+    [fetchFolders],
+  );
+
+  const deleteFolder = useCallback(
+    async (id: string) => {
+      try {
+        await api.delete(`/transactions/folders/${id}`);
+        if (selectedFolder?.id === id) setSelectedFolder(null);
+        await fetchFolders();
+        await fetchTransactions();
+      } catch (err) {
+        console.error("Failed to delete folder", err);
+      }
+    },
+    [fetchFolders, fetchTransactions, selectedFolder],
+  );
+
+  useEffect(() => {
+    fetchFolders();
+  }, [fetchFolders]);
+
+  useEffect(() => {
+    // reload transactions when selected folder changes
+    fetchTransactions();
+  }, [selectedFolder, fetchTransactions]);
+
   const value: TransactionsContextType = {
     transactions,
     loading,
@@ -206,6 +276,9 @@ export function TransactionsProvider({ children }: { children: ReactNode }) {
     category,
     formData,
     totals,
+    folders,
+    foldersLoading,
+    selectedFolder,
     setShowForm,
     setCategory,
     setFormData,
@@ -215,6 +288,10 @@ export function TransactionsProvider({ children }: { children: ReactNode }) {
     handleAddTransaction,
     handleExportCsv,
     fetchTransactions,
+    setSelectedFolder,
+    fetchFolders,
+    createFolder,
+    deleteFolder,
   };
 
   return (
