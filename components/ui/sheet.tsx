@@ -55,7 +55,7 @@ const SheetContent = React.forwardRef<
       {...props}
     >
       {children}
-      <SheetClose className="absolute right-4 top-4 rounded-full p-2 text-[rgba(243,251,255,0.62)] transition hover:bg-white/5 hover:text-white focus:outline-none focus:ring-2 focus:ring-[rgba(0,238,255,0.45)]">
+      <SheetClose className="absolute right-6 top-6 rounded-full p-2 text-[rgba(243,251,255,0.62)] transition hover:bg-white/5 hover:text-white focus:outline-none focus:ring-2 focus:ring-[rgba(0,238,255,0.45)] border border-[rgba(0,238,255,0.16)]">
         <X className="h-4 w-4" />
         <span className="sr-only">Close</span>
       </SheetClose>

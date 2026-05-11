@@ -88,10 +88,13 @@ export function TransactionsHeader() {
               <Button
                 variant="secondary"
                 className="justify-between gap-3 px-5"
+                aria-label={selectedFolder?.name || "All folders"}
               >
                 <span className="flex items-center gap-2">
                   <FolderPlus className="h-4 w-4" />
-                  {selectedFolder?.name || "All folders"}
+                  <span className="hidden sm:inline">
+                    {selectedFolder?.name || "All folders"}
+                  </span>
                 </span>
                 <ChevronDown className="h-4 w-4 opacity-70" />
               </Button>
@@ -135,7 +138,7 @@ export function TransactionsHeader() {
             <DialogTrigger asChild>
               <Button variant="outline" className="gap-2 px-5">
                 <Plus className="h-4 w-4" />
-                New folder
+                <span className="hidden sm:inline">New folder</span>
               </Button>
             </DialogTrigger>
             <DialogContent>
@@ -188,7 +191,7 @@ export function TransactionsHeader() {
                   className="gap-2"
                 >
                   <Star className="h-4 w-4" />
-                  Make default
+                  <span className="hidden sm:inline">Make default</span>
                 </Button>
               )}
               <Button
@@ -198,6 +201,7 @@ export function TransactionsHeader() {
                 className="gap-2"
               >
                 <Trash2 className="h-4 w-4" />
+                <span className="hidden sm:inline">Delete folder</span>
               </Button>
             </>
           )}

@@ -28,7 +28,7 @@ export function DashboardSidebar() {
   };
 
   const navItems = [
-    { label: "Dashboard", href: "/", icon: LayoutDashboard },
+    // { label: "Dashboard", href: "/", icon: LayoutDashboard },
     { label: "Transactions", href: "/transactions", icon: ReceiptText },
     { label: "Budgets", href: "/budgets", icon: WalletCards },
     { label: "Reports", href: "/reports", icon: ChartColumn },
@@ -53,7 +53,7 @@ export function DashboardSidebar() {
         <p className="text-[10px] uppercase tracking-[0.26em] text-[rgba(0,238,255,0.9)]">
           Signed in as
         </p>
-        <p className="mt-1 break-words font-medium text-white">
+        <p className="mt-1 wrap-break-word font-medium text-white">
           {user?.email || "Unknown user"}
         </p>
       </div>

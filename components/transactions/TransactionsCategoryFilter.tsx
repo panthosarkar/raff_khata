@@ -31,7 +31,7 @@ export function TransactionsCategoryFilter() {
               <ChevronDown className="h-4 w-4 opacity-70" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-[var(--radix-dropdown-menu-trigger-width)] min-w-[14rem]">
+          <DropdownMenuContent className="w-(--radix-dropdown-menu-trigger-width) min-w-56">
             <DropdownMenuLabel>Categories</DropdownMenuLabel>
             <DropdownMenuItem onSelect={() => setCategory("")}>
               All categories
