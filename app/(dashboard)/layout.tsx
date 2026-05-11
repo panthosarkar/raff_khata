@@ -11,6 +11,11 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
+  const [userEmail, setUserEmail] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    setUserEmail(localStorage.getItem("user_email"));
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -39,6 +44,14 @@ export default function DashboardLayout({
                 Finance cockpit
               </p>
             </div>
+          </div>
+          <div className="mb-6 rounded-3xl border border-[rgba(0,238,255,0.14)] bg-[rgba(15,20,27,0.55)] px-4 py-3 text-sm text-[rgba(243,251,255,0.8)]">
+            <p className="text-[10px] uppercase tracking-[0.26em] text-[rgba(0,238,255,0.9)]">
+              Signed in as
+            </p>
+            <p className="mt-1 break-words font-medium text-white">
+              {userEmail || "Unknown user"}
+            </p>
           </div>
           <nav className="space-y-2 text-sm font-medium">
             {[
