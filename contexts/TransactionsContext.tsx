@@ -60,7 +60,7 @@ interface TransactionsContextType {
   folders: Folder[];
   foldersLoading: boolean;
   selectedFolder?: Folder | null;
-  setSelectedFolder: (f?: Folder | null) => void;
+  setSelectedFolder: React.Dispatch<React.SetStateAction<Folder | null>>;
   fetchFolders: () => Promise<void>;
   createFolder: (name: string) => Promise<void>;
   deleteFolder: (id: string) => Promise<void>;
