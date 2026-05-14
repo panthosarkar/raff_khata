@@ -1,10 +1,14 @@
 import "./globals.css";
 import React from "react";
 import { AuthProvider } from "@/components/shared/AuthProvider";
+import type { Metadata } from "next";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Raff_khata",
   description: "Personal finance tracker",
+  icons: {
+    icon: "/icon.svg",
+  },
 };
 
 export default function RootLayout({
