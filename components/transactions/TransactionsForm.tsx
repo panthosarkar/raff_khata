@@ -25,14 +25,14 @@ export function TransactionsForm() {
   return (
     <div className="space-y-5">
       <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <div>
+        {/* <div>
           <p className="text-sm uppercase tracking-[0.24em] text-[rgba(243,251,255,0.55)]">
             {editingTransaction ? "Edit mode" : "Create mode"}
           </p>
           <h2 className="mt-1 text-2xl font-semibold text-white">
             {editingTransaction ? "Update transaction" : "Add transaction"}
           </h2>
-        </div>
+        </div> */}
         {editingTransaction?.id && (
           <span className="inline-flex w-fit rounded-full border border-[rgba(0,238,255,0.18)] bg-[rgba(0,238,255,0.08)] px-3 py-1 text-xs font-medium text-[#a8fbff]">
             Editing ID: {editingTransaction.id}
