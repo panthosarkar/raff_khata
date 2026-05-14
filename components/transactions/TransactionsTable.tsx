@@ -1,5 +1,6 @@
 import { Transaction } from "@/lib/types";
 import { useTransactions } from "@/hooks/useTransactions";
+import { TransactionDeleteDialog } from "./TransactionDeleteDialog";
 
 interface TransactionsTableProps {
   transactions: Transaction[];
@@ -52,13 +53,16 @@ export function TransactionsTable({ transactions }: TransactionsTableProps) {
                 </span>
               </td>
               <td className="px-6 py-4 text-center">
-                <button
-                  type="button"
-                  onClick={() => openEditForm(transaction)}
-                  className="rounded-full border border-[rgba(0,238,255,0.2)] bg-[rgba(15,20,27,0.6)] px-4 py-2 text-xs font-medium text-white transition hover:border-[rgba(0,238,255,0.4)] hover:bg-[rgba(0,238,255,0.08)]"
-                >
-                  Edit
-                </button>
+                <div className="flex items-center justify-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => openEditForm(transaction)}
+                    className="rounded-full border border-[rgba(0,238,255,0.2)] bg-[rgba(15,20,27,0.6)] px-4 py-2 text-xs font-medium text-white transition hover:border-[rgba(0,238,255,0.4)] hover:bg-[rgba(0,238,255,0.08)]"
+                  >
+                    Edit
+                  </button>
+                  <TransactionDeleteDialog transactionId={transaction.id} />
+                </div>
               </td>
             </tr>
           ))}

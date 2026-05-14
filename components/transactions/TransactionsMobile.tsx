@@ -1,5 +1,6 @@
 import { Transaction } from "@/lib/types";
 import { useTransactions } from "@/hooks/useTransactions";
+import { TransactionDeleteDialog } from "./TransactionDeleteDialog";
 
 interface TransactionsMobileProps {
   transactions: Transaction[];
@@ -57,6 +58,7 @@ export function TransactionsMobile({ transactions }: TransactionsMobileProps) {
             >
               Edit
             </button>
+            <TransactionDeleteDialog transactionId={transaction.id} compact />
           </div>
         </article>
       ))}

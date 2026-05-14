@@ -1,9 +1,17 @@
 import { useTransactions } from "@/hooks/useTransactions";
 import { TRANSACTION_CATEGORIES } from "@/contexts/TransactionsContext";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+const NO_FOLDER_VALUE = "__none__";
 
 export function TransactionsForm() {
   const {
-    showForm,
     formData,
     setFormData,
     submitting,
@@ -14,10 +22,8 @@ export function TransactionsForm() {
     folders,
   } = useTransactions();
 
-  if (!showForm) return null;
-
   return (
-    <div className="digital-panel-strong rounded-4xl p-6">
+    <div className="space-y-5">
       <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="text-sm uppercase tracking-[0.24em] text-[rgba(243,251,255,0.55)]">
@@ -70,19 +76,23 @@ export function TransactionsForm() {
           <span className="text-sm font-medium text-[rgba(243,251,255,0.78)]">
             Category
           </span>
-          <select
+          <Select
             value={formData.category}
-            onChange={(event) =>
-              setFormData({ ...formData, category: event.target.value })
+            onValueChange={(value) =>
+              setFormData({ ...formData, category: value })
             }
-            className="digital-select px-4 py-3"
           >
-            {TRANSACTION_CATEGORIES.map((item) => (
-              <option key={item} value={item}>
-                {item}
-              </option>
-            ))}
-          </select>
+            <SelectTrigger className="h-12 rounded-2xl">
+              <SelectValue placeholder="Select category" />
+            </SelectTrigger>
+            <SelectContent>
+              {TRANSACTION_CATEGORIES.map((item) => (
+                <SelectItem key={item} value={item}>
+                  {item}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </label>
         <label className="space-y-2">
           <span className="text-sm font-medium text-[rgba(243,251,255,0.78)]">
@@ -115,23 +125,27 @@ export function TransactionsForm() {
           <span className="text-sm font-medium text-[rgba(243,251,255,0.78)]">
             Folder
           </span>
-          <select
-            value={formData.folder_id || ""}
-            onChange={(e) =>
+          <Select
+            value={formData.folder_id || NO_FOLDER_VALUE}
+            onValueChange={(value) =>
               setFormData({
                 ...formData,
-                folder_id: e.target.value || undefined,
+                folder_id: value === NO_FOLDER_VALUE ? undefined : value,
               })
             }
-            className="digital-select px-4 py-3"
           >
-            <option value="">(No folder)</option>
-            {folders.map((f) => (
-              <option key={f.id} value={f.id}>
-                {f.name}
-              </option>
-            ))}
-          </select>
+            <SelectTrigger className="h-12 rounded-2xl">
+              <SelectValue placeholder="(No folder)" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value={NO_FOLDER_VALUE}>(No folder)</SelectItem>
+              {folders.map((f) => (
+                <SelectItem key={f.id} value={f.id}>
+                  {f.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </label>
         <label className="flex items-center gap-3 md:col-span-2">
           <input

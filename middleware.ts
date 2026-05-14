@@ -7,6 +7,10 @@ const authRoutes = ["/login", "/register", "/reset-password"];
 const publicRoutes = ["/"];
 
 export function middleware(request: NextRequest) {
+  if (process.env.NODE_ENV === "development") {
+    return NextResponse.next();
+  }
+
   const pathname = request.nextUrl.pathname;
   const token = request.cookies.get(COOKIE_NAME)?.value;
 

@@ -70,6 +70,7 @@ interface TransactionsContextType {
   openEditForm: (transaction: Transaction) => void;
   resetForm: () => void;
   handleAddTransaction: (event: React.FormEvent) => Promise<void>;
+  deleteTransaction: (transactionId: string) => Promise<void>;
   handleExportCsv: () => Promise<void>;
   fetchTransactions: () => Promise<void>;
 }
@@ -145,6 +146,7 @@ export function TransactionsProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const fetchTransactions = useCallback(async () => {
+    setLoading(true);
     try {
       const params = {
         limit: 100,
@@ -230,6 +232,18 @@ export function TransactionsProvider({ children }: { children: ReactNode }) {
       console.error("Failed to export transactions", error);
     }
   }, []);
+
+  const deleteTransaction = useCallback(
+    async (transactionId: string) => {
+      try {
+        await api.delete(`/transactions/${transactionId}`);
+        await fetchTransactions();
+      } catch (error) {
+        console.error("Failed to delete transaction", error);
+      }
+    },
+    [fetchTransactions],
+  );
 
   const fetchFolders = useCallback(async () => {
     setFoldersLoading(true);
@@ -325,6 +339,7 @@ export function TransactionsProvider({ children }: { children: ReactNode }) {
     openEditForm,
     resetForm,
     handleAddTransaction,
+    deleteTransaction,
     handleExportCsv,
     fetchTransactions,
     setSelectedFolder,

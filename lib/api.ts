@@ -1,10 +1,28 @@
 import axios from "axios";
-import { getCookie, COOKIE_NAMES, clearAuthCookies } from "./cookies";
+import {
+  getCookie,
+  COOKIE_NAMES,
+  clearAuthCookies,
+  setCookie,
+} from "./cookies";
 
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8001/api",
   withCredentials: true,
 });
+
+let refreshTokenPromise: Promise<string | null> | null = null;
+
+const refreshAccessToken = async () => {
+  const response = await api.post("/auth/refresh");
+  const accessToken = response.data?.access_token;
+
+  if (typeof window !== "undefined" && accessToken) {
+    setCookie(COOKIE_NAMES.ACCESS_TOKEN, accessToken, 7);
+  }
+
+  return accessToken ?? null;
+};
 
 api.interceptors.request.use((config) => {
   if (typeof window !== "undefined") {
@@ -22,14 +40,35 @@ api.interceptors.response.use(
   (res) => res,
   async (error) => {
     const original = error.config;
-    if (error.response && error.response.status === 401 && !original._retry) {
+
+    if (
+      error.response &&
+      error.response.status === 401 &&
+      !original?._retry &&
+      !String(original?.url || "").includes("/auth/refresh")
+    ) {
       original._retry = true;
+
       try {
-        await api.post("/auth/refresh");
+        if (!refreshTokenPromise) {
+          refreshTokenPromise = refreshAccessToken().finally(() => {
+            refreshTokenPromise = null;
+          });
+        }
+
+        const nextAccessToken = await refreshTokenPromise;
+        if (nextAccessToken) {
+          original.headers = original.headers ?? {};
+          original.headers.Authorization = `Bearer ${nextAccessToken}`;
+        }
+
         return api(original);
-      } catch (e) {
+      } catch {
         if (typeof window !== "undefined") {
           clearAuthCookies();
+          if (!window.location.pathname.startsWith("/login")) {
+            window.location.href = "/login";
+          }
         }
         return Promise.reject(error);
       }

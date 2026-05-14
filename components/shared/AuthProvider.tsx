@@ -39,6 +39,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
+  const isDevMode = process.env.NODE_ENV === "development";
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -47,6 +48,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const initializeAuth = async () => {
       try {
+        if (isDevMode) {
+          const devEmail =
+            getCookie(COOKIE_NAMES.USER_EMAIL) || "dev-user@localhost";
+          setUser({ email: devEmail, name: "Development User" });
+          return;
+        }
+
         const token = getCookie(COOKIE_NAMES.ACCESS_TOKEN);
         const userEmail = getCookie(COOKIE_NAMES.USER_EMAIL);
 
@@ -61,7 +69,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
 
     initializeAuth();
-  }, []);
+  }, [isDevMode]);
 
   const login = async (email: string, password: string) => {
     setIsLoading(true);
@@ -157,7 +165,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const value: AuthContextType = {
     user,
     isLoading,
-    isAuthenticated: !!user,
+    isAuthenticated: isDevMode || !!user,
     error,
     login,
     logout,

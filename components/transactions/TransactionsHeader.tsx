@@ -35,6 +35,7 @@ export function TransactionsHeader() {
   const {
     showForm,
     setShowForm,
+    resetForm,
     handleExportCsv,
     openCreateForm,
     folders,
@@ -219,7 +220,14 @@ export function TransactionsHeader() {
           </Button>
           <Button
             type="button"
-            onClick={showForm ? () => setShowForm(false) : openCreateForm}
+            onClick={
+              showForm
+                ? () => {
+                    resetForm();
+                    setShowForm(false);
+                  }
+                : openCreateForm
+            }
             className="gap-2 px-5"
           >
             <Plus className="h-4 w-4" />
