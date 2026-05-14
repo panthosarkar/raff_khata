@@ -127,9 +127,13 @@ export function TransactionsProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const openCreateForm = useCallback(() => {
-    resetForm();
+    setEditingTransaction(null);
+    setFormData({
+      ...emptyFormData,
+      folder_id: selectedFolder?.id || undefined,
+    });
     setShowForm(true);
-  }, [resetForm]);
+  }, [selectedFolder]);
 
   const openEditForm = useCallback((transaction: Transaction) => {
     setEditingTransaction(transaction);
