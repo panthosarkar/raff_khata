@@ -50,6 +50,8 @@ export function TransactionsHeader() {
   const [folderDialogOpen, setFolderDialogOpen] = useState(false);
   const [folderName, setFolderName] = useState("");
   const [makeDefault, setMakeDefault] = useState(false);
+  const [deleteFolderDialogOpen, setDeleteFolderDialogOpen] = useState(false);
+  const [deletingFolder, setDeletingFolder] = useState(false);
 
   const handleCreateFolder = async () => {
     const name = folderName.trim();
@@ -62,8 +64,13 @@ export function TransactionsHeader() {
 
   const handleDeleteSelectedFolder = async () => {
     if (!selectedFolder) return;
-    if (window.confirm(`Delete folder "${selectedFolder.name}"?`)) {
+
+    setDeletingFolder(true);
+    try {
       await deleteFolder(selectedFolder.id);
+      setDeleteFolderDialogOpen(false);
+    } finally {
+      setDeletingFolder(false);
     }
   };
 
@@ -198,12 +205,44 @@ export function TransactionsHeader() {
               <Button
                 type="button"
                 variant="destructive"
-                onClick={handleDeleteSelectedFolder}
+                onClick={() => setDeleteFolderDialogOpen(true)}
                 className="gap-2"
               >
                 <Trash2 className="h-4 w-4" />
                 <span className="hidden sm:inline">Delete folder</span>
               </Button>
+              <Dialog
+                open={deleteFolderDialogOpen}
+                onOpenChange={setDeleteFolderDialogOpen}
+              >
+                <DialogContent className="max-w-md">
+                  <DialogHeader>
+                    <DialogTitle>Delete folder?</DialogTitle>
+                    <DialogDescription>
+                      This action cannot be undone. The folder and its folder
+                      assignment will be removed from your transactions.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="flex flex-wrap justify-end gap-2">
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      onClick={() => setDeleteFolderDialogOpen(false)}
+                      disabled={deletingFolder}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      onClick={handleDeleteSelectedFolder}
+                      isLoading={deletingFolder}
+                    >
+                      Delete folder
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
             </>
           )}
         </div>
