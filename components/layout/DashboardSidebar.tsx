@@ -16,14 +16,16 @@ import {
 } from "lucide-react";
 
 export function DashboardSidebar() {
-  const { user, logout } = useAuth();
+  const { user, logout, isLoading } = useAuth();
   const [open, setOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   useEffect(() => {
     setOpen(false);
   }, []);
 
   const handleLogout = async () => {
+    setIsLoggingOut(true);
     await logout();
   };
 
@@ -77,10 +79,11 @@ export function DashboardSidebar() {
         <Button
           variant="outline"
           onClick={handleLogout}
+          isLoading={isLoggingOut}
           className="w-full justify-center rounded-4xl border-[rgba(0,238,255,0.24)] bg-[rgba(15,20,27,0.62)] text-white hover:bg-[rgba(0,238,255,0.06)]"
         >
-          <LogOut className="h-4 w-4" />
-          Logout
+          {!isLoggingOut && <LogOut className="h-4 w-4" />}
+          {isLoggingOut ? "Logging out..." : "Logout"}
         </Button>
       </div>
     </div>
