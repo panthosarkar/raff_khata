@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException, status, Response, Cookie
 from datetime import datetime, timedelta
 from bson import ObjectId
+import os
 from ..models.user import UserCreate, ForgotPasswordRequest, ResetPasswordRequest
 from ..services.auth_service import (
     hash_password,
@@ -11,9 +12,27 @@ from ..services.auth_service import (
     decode_token,
 )
 from .. import database
+from ..config import Settings
 import hashlib
 
 router = APIRouter()
+settings = Settings()
+
+
+def _refresh_cookie_kwargs() -> dict:
+    # Cross-site frontend/backend deployments require SameSite=None with Secure.
+    frontend_url = os.getenv("FRONTEND_URL", "").strip().lower()
+    allowed_origins = settings.ALLOWED_ORIGINS.lower()
+    secure_cookie = frontend_url.startswith("https://") or "https://" in allowed_origins
+    same_site = "none" if secure_cookie else "lax"
+
+    return {
+        "httponly": True,
+        "secure": secure_cookie,
+        "samesite": same_site,
+        "path": "/",
+        "max_age": settings.REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60,
+    }
 
 
 def _hash_reset_token(token: str) -> str:
@@ -42,7 +61,7 @@ async def login(payload: UserCreate, response: Response):
     access = create_access_token(user_id)
     refresh = create_refresh_token(user_id)
     # set refresh token as httpOnly cookie
-    response.set_cookie("refresh_token", refresh, httponly=True, samesite="lax")
+    response.set_cookie("refresh_token", refresh, **_refresh_cookie_kwargs())
     return {"access_token": access, "token_type": "bearer"}
 
 
@@ -54,12 +73,14 @@ async def refresh(response: Response, refresh_token: str | None = Cookie(default
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid refresh token")
     sub = payload.get("sub")
     new_access = create_access_token(sub)
+    new_refresh = create_refresh_token(sub)
+    response.set_cookie("refresh_token", new_refresh, **_refresh_cookie_kwargs())
     return {"access_token": new_access, "token_type": "bearer"}
 
 
 @router.post("/logout")
 async def logout(response: Response):
-    response.delete_cookie("refresh_token")
+    response.delete_cookie("refresh_token", path="/")
     return {"status": "ok"}
 
 
